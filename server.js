@@ -77,6 +77,12 @@ app.get('/weather', (req, res) => {
     });
 });
 
+app.get('/data', (_, res) => {
+  log('GET /data: Request received. Now serving the projectData.');
+  res.send(projectData);
+  log('GET /data: projectData sent.');
+});
+
 // POST Feelings
 app.post('/feelings/add', (req, res) => {
   log('POST /feelings/add: Request received. Analysing body.');
@@ -88,14 +94,15 @@ app.post('/feelings/add', (req, res) => {
     content: content,
     date: Date.now(),
   };
-  log('POST /feelings/add: Sending response.');
-  res.send(projectData);
-  log('POST /feelings/add: Response sent.');
+  res.send();
+  // log('POST /feelings/add: Sending response.');
+  // res.send(projectData);
+  // log('POST /feelings/add: Response sent.');
 });
 
 /* API Calls */
 
-async function getWeatherFromApi(zip, country) {
+const getWeatherFromApi = async (zip, country) => {
   const url = `${api}zip=${zip},${country}&appid=${apiKey}`;
   log(
     `External GET from OpenWeatherApi: Requesting current weather in ${zip} (${country}) with ${url}.`
@@ -119,11 +126,11 @@ async function getWeatherFromApi(zip, country) {
         return new Error('ERROR during External GET from OpenWeatherApi');
       });
   });
-}
+};
 
 // Protocol Functions
-function log(message) {
+const log = (message) => {
   console.log(`Server Log at ${new Date().toISOString()}:`);
   console.log(message);
   console.log('');
-}
+};

@@ -1,9 +1,7 @@
 // Event listener to add function to existing HTML DOM element
 
-document.querySelector('#generate').addEventListener('click', generate);
-
 /* Function called by event listener */
-function generate() {
+const generate = () => {
   const zip = document.querySelector('#zip').value;
   const content = document.querySelector('#feelings').value;
   const country = document.querySelector('#country').value;
@@ -14,16 +12,11 @@ function generate() {
   getWeather(country, zip)
     .then((weather) => {
       postContent(content, createInfo(weather))
-        .then((contentResponse) =>
-          contentResponse
-            .json()
-            .then((projectData) => {
-              writeRecentEntry(projectData);
-            })
-            .catch((writeError) => {
-              alert('There was an error writing the recent entry.');
-            })
-        )
+        .then(() => {
+          getData().then((projectData) => {
+            writeRecentEntry(projectData);
+          });
+        })
         .catch((postError) => {
           alert('There was an error posting your content!');
           log(postError);
@@ -35,15 +28,15 @@ function generate() {
       log(weatherError);
       return;
     });
-}
+};
 
-function writeRecentEntry(entry) {
+const writeRecentEntry = (entry) => {
   document.querySelector('#date').innerHTML = new Date(
     entry.date
   ).toUTCString();
   document.querySelector('#temp').innerHTML = entry.info;
   document.querySelector('#content').innerHTML = entry.content;
-}
+};
 
 /* Function to GET Web API Data*/
 
@@ -53,17 +46,27 @@ function writeRecentEntry(entry) {
  * @param {String} zip Common postal-zip codes which should be handeled by Weather APIs.
  * @return {Object} representing the weather info provided by the server
  */
-async function getWeather(country, zip) {
-  return fetch(`/weather?zip=${zip}&country=${country}`, {
+const getWeather = async (country, zip) =>
+  fetch(`/weather?zip=${zip}&country=${country}`, {
     method: 'GET',
     mode: 'same-origin',
   }).then((response) => response.json().then((weatherObj) => weatherObj));
-}
+
+/**
+ * Requests the current data from the server and returns it as an object
+ *
+ * @return {Object} holding the recent data provided by the server
+ */
+const getData = async () =>
+  fetch(`/data`, {
+    method: 'GET',
+    mode: 'same-origin',
+  }).then((response) => response.json().then((data) => data));
 
 /* Function to POST data */
 
-async function postContent(content, info) {
-  return fetch(`/feelings/add`, {
+const postContent = async (content, info) =>
+  fetch(`/feelings/add`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -71,21 +74,24 @@ async function postContent(content, info) {
     mode: 'same-origin',
     body: JSON.stringify({ content: content, info: info }),
   });
-}
 
 /* Function to GET Project Data */
 // not nessessary, as it is returned by the postContent()-function
 
 /* Function to make an info string, containing the place, temperature and main-weather */
-function createInfo(weather) {
+const createInfo = (weather) => {
   // convert from kelvin to celsius
   const tempC = Math.round(weather.main.temp - 273.15);
   const info = `${weather.name}, ${tempC}°C, ${weather.weather[0].main}`;
   return info;
-}
+};
 
 // Protocol Functions
-function log(message) {
+const log = (message) => {
   console.log(`${new Date().toISOString()} - App Log:`);
   console.log(message);
-}
+};
+
+// MAIN
+
+document.querySelector('#generate').addEventListener('click', generate);
