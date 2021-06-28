@@ -92,6 +92,6 @@ const log = (message) => {
   console.log(message);
 };
 
-// MAIN
+// adding click event listener to generate button
 
 document.querySelector('#generate').addEventListener('click', generate);
