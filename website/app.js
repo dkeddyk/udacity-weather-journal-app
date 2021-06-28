@@ -1,5 +1,7 @@
 // Event listener to add function to existing HTML DOM element
 
+document.querySelector('#generate').addEventListener('click', generate);
+
 /* Function called by event listener */
 function generate() {
   const zip = document.querySelector('#zip').value;
