@@ -1,8 +1,13 @@
+window {
+  min-width: fit-content;
+}
+
 body {
   background: #fffff8;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   padding: 5px;
   height: 100vh-10px;
+  min-width: fit-content;
 }
 
 .row {
