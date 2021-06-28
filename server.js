@@ -48,10 +48,12 @@ app.listen(port, () => log('> Server is up and running on port : ' + port));
 app.get('/weather', (req, res) => {
   log('GET /weather: Request received. Try to extract query params.');
   let zip;
+  let country;
   let weatherPromise;
   try {
     zip = req.query.zip;
-    `GET /weather: Extracting successful. Zip code is ${zip}.`;
+    country = req.query.country;
+    `GET /weather: Extracting successful. Request for ${zip}, ${country}`;
   } catch (error) {
     log(
       'GET /weather: There was an error extracting the zip code from the query.'
@@ -59,10 +61,10 @@ app.get('/weather', (req, res) => {
     return;
   }
   log('GET /weather: Requsting weather from an external Api');
-  weatherPromise = getWeatherFromApi(req.query.zip);
+  weatherPromise = getWeatherFromApi(zip, country);
   weatherPromise
     .then((weather) => {
-      log('GET /weather: Request from external Api successful');
+      0, log('GET /weather: Request from external Api successful');
       log('GET /weather: sending response');
       res.send(weather);
       log('GET /weather: response sent');
@@ -93,10 +95,10 @@ app.post('/feelings/add', (req, res) => {
 
 /* API Calls */
 
-async function getWeatherFromApi(zip) {
-  const url = api + 'zip=' + zip + ',DE&appid=' + apiKey;
+async function getWeatherFromApi(zip, country) {
+  const url = `${api}zip=${zip},${country}&appid=${apiKey}`;
   log(
-    `External GET from OpenWeatherApi: Requesting current weather in ${zip} (DE) with ${url}.`
+    `External GET from OpenWeatherApi: Requesting current weather in ${zip} (${country}) with ${url}.`
   );
   return fetch(url, {
     method: 'GET',

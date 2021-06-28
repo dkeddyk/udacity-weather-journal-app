@@ -4,11 +4,12 @@
 function generate() {
   const zip = document.querySelector('#zip').value;
   const content = document.querySelector('#feelings').value;
+  const country = document.querySelector('#country').value;
   if (!zip) {
     alert('Please enter a Zipcode');
     return;
   }
-  getWeather(zip)
+  getWeather(country, zip)
     .then((weather) => {
       postContent(content, createInfo(weather))
         .then((contentResponse) =>
@@ -50,8 +51,8 @@ function writeRecentEntry(entry) {
  * @param {String} zip Common postal-zip codes which should be handeled by Weather APIs.
  * @return {Object} representing the weather info provided by the server
  */
-async function getWeather(zip) {
-  return fetch(`/weather?zip=${zip}`, {
+async function getWeather(country, zip) {
+  return fetch(`/weather?zip=${zip}&country=${country}`, {
     method: 'GET',
     mode: 'same-origin',
   }).then((response) => response.json().then((weatherObj) => weatherObj));
